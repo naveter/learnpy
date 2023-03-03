@@ -17,8 +17,12 @@ parser.add_argument('-l', '--lines', type=int, default=10)
 args = parser.parse_args()
 print(args)
 
+# regexp
 print(re.findall(r'\bf[a-z]*', 'which foot or hand fell fastest'))
 print(re.sub(r'(\b[a-z]+) \1', r'\1', 'cat in the the hat'), 'tea for too'.replace('too', 'two'))
+
+it = re.compile('[a-z]+')
+print("Search: ", it.search("some 4 string")[0])
 
 print(random.choice(['apple', 'pear', 'banana']))
 print(random.sample(range(100), 10))   # sampling without replacement

@@ -1,4 +1,7 @@
 from enum import Enum
+import mymod
+
+print(mymod.exponent(2))
 
 words = ['cat', 'window', 'defenestrate']
 for w in words:
