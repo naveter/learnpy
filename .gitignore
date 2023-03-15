@@ -1,6 +1,9 @@
 .idea/*.xml
 .idea
 learnpy.iml
+resource/xkcd
+tutorial-env
+venv
 
 
 

@@ -1,5 +1,7 @@
 import threading
 import zipfile
+import time
+import downloadxkcd
 
 
 class AsyncZip(threading.Thread):
@@ -27,5 +29,16 @@ print('The main program continues to run in foreground.')
 background.join()    # Wait for the background task to finish
 print('Main program waited until background was done.')
 
+time.sleep(2)
 
+threadObj = threading.Thread(target=print, args=['Cats', 'Dogs', 'Frogs'], kwargs={'sep': ' & '})
+threadObj.start()
+
+time.sleep(2)
+
+downloadThread = threading.Thread(target=downloadxkcd.xkcd, args=(0, 3))
+downloadThread.start()
+downloadThread.join()   # Wait for end
+
+print('Done.')
 
