@@ -88,6 +88,11 @@ for value in raw_data:
     if not math.isnan(value):
         filtered_data.append(value)
 
+# Array keys like array
+# Keys are (x, y) tuples of ints, values the character at that position on the canvas:
+# canvas = {}
+# canvas[(canvasX, canvasY)] = dieFace[dy][dx]
+# canvas.get((cx, cy), ' ')
 
 
 
