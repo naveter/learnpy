@@ -164,3 +164,16 @@ def f(ham: str, eggs: str = 'eggs') -> str: # Function annotation
 print( f('spam') )
 
 
+# Unknown amount of variables gives to function
+def fun(a, b, *args, c='d', d='e', **kwargs):
+    for key, val in vars().items():
+        print(f'{key} = {val}')
+
+
+lst = ['тут список будет распакован', 4, 5, 'тут будет конец распаковки']
+dct = {'i': 'j', 'x': 'y'}
+fun('тут у нас а', 'тут у нас б', ['тут какой-то список', 'да да'], *lst, True, 'это список args', f='g', h='k', **dct)
+
+a, b, *c = ["hi", 2, False, True, 10, 11]
+print(a, b, c)
+
