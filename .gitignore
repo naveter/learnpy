@@ -4,6 +4,9 @@ learnpy.iml
 resource/xkcd
 tutorial-env
 venv
+tutorial-env
+src/postgres/pgdata
+
 
 
 

@@ -6,6 +6,7 @@ import time, os.path
 import logging
 from collections import deque
 import bisect
+import random
 
 locale.setlocale(locale.LC_ALL, ('ru_RU', 'UTF-8'))
 conv = locale.localeconv()          # get a mapping of conventions
@@ -23,6 +24,7 @@ class BatchRename(Template):
 photofiles = ['img_1074.jpg', 'img_1076.jpg', 'img_1077.jpg']
 t = BatchRename("%d-%n-%f")
 date = time.strftime('%d%b%y')
+# enumerate - auto count for cycles
 for i, filename in enumerate(photofiles):
     base, ext = os.path.splitext(filename)
     newname = t.substitute(d=date, n=i, f=ext)
@@ -52,4 +54,18 @@ print(Decimal('1.00') % Decimal('.10'), sum([Decimal('0.1')]*10) == Decimal('1.0
 
 getcontext().prec = 36
 print(Decimal(1) / Decimal(7))
+
+# array of hashtables
+ants = []
+for i in range(3):
+    ant = {
+    'x': random.randint(0, 3 + 1),
+    'y': random.randint(0, 2 + i),
+    'orig': i,
+    }
+    ants.append(ant)
+
+print(ants)
+
+
 

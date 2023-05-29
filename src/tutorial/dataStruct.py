@@ -65,6 +65,11 @@ print(a & b)                              # letters in both a and b
 print(a ^ b)                              # letters in a or b but not both
 print( {x for x in 'abracadabra' if x not in 'abc'} )
 
+# Set up simple set
+INITIAL_SAND = set()
+for y in range(8):
+    INITIAL_SAND.add((y + 4))
+
 print(dict([('sape', 4139), ('guido', 4127), ('jack', 4098)]))
 print({x: x**2 for x in (2, 4, 6)})
 print(dict(sape=4139, guido=4127, jack=4098))
