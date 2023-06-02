@@ -1,9 +1,6 @@
 """
 Call http://localhost:5000
-request.args: the key/value pairs in the URL query string
-request.form: the key/value pairs in the body, from a HTML post form, or JavaScript request that isn't JSON encoded
-request.files: the files in the body, which Flask keeps separate from form. HTML forms must use enctype=multipart/form-data or files will not be uploaded.
-request.values: combined args and form, preferring args if keys overlap
+Local py-service: get, add, edit, search GET methods
 """
 
 from flask import Flask
@@ -25,8 +22,9 @@ conn = psycopg2.connect(database="habrdb",
 cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
 
-@api.route('/search', methods=['GET'])
-def get_search():
+# curl "http://localhost:5000/get?id=1"
+@api.route('/get', methods=['GET'])
+def get_get():
     get_id = request.args.get("id")
     if get_id is None or not get_id.isnumeric():
         raise Exception('id', 'id must be numeric')
@@ -35,55 +33,84 @@ def get_search():
     fetch = cursor.fetchall()
     close()
     data = [dict(row) for row in fetch]
-
     return jsonify(data)
 
 
-@api.route('/change', methods=['GET'])
-def get_change():
+# curl "http://localhost:5000/edit?id=1&name=Kirill&description=Simplepope5"
+@api.route('/edit', methods=['GET'])
+def get_edit():
     args = request.args
     return_message = {}
-    if len(args) != 3 and len(args) != 2:
+    if len(args) != 3 or args['id'] == "":
         return_message["result"] = "false"
         return_message["error"] = "There is not correct count of parameters"
         return json.dumps(return_message)
 
-    if args['id'] != "":  # Edit
-        try:
-            cursor.execute("UPDATE document_template SET "
-                           "NAME = %s, "
-                           "DESCRIPTION = %s "
-                           "WHERE id = %s", (args['name'], args['description'], args['id']))
-            conn.commit()
-        except Exception as err:
-            return_message["result"] = "false"
-            return_message["error"] = "Cant update data"
-            return json.dumps(return_message)
-
+    try:
+        cursor.execute("UPDATE document_template SET "
+                       "NAME = %s, "
+                       "DESCRIPTION = %s "
+                       "WHERE id = %s", (args['name'], args['description'], args['id']))
+        conn.commit()
+        close()
         return_message["result"] = "success"
         return_message["id"] = args['id']
-    else:  # Add
-        try:
-            cursor.execute("SELECT COUNT(*) FROM document_template")
-            count = cursor.fetchone()
+    except Exception as err:
+        return_message["result"] = "false"
+        return_message["error"] = "Cant update data"
 
-            cursor.execute(
-                "INSERT INTO document_template (ID, NAME, DESCRIPTION "
-                "VALUES(%s, %s, %s)",
-                (count + 1, args['name'], args['description']))
-            conn.commit()
-        except Exception as err:
-            return_message["result"] = "false"
-            return_message["error"] = "Cant insert new data"
-            return json.dumps(return_message)
-
-        return_message["result"] = "Success"
-        return_message["id"] = count + 1
-
-    close()
-    return_message["result"] = "success"
-    return_message["id"] = args['id']
     return json.dumps(return_message)
+
+
+# curl "http://localhost:5000/add?name=Peter&description=Gandalf"
+@api.route('/add', methods=['GET'])
+def get_add():
+    args = request.args
+    return_message = {}
+    if len(args) != 2:
+        return_message["result"] = "false"
+        return_message["error"] = "There is not correct count of parameters"
+        return json.dumps(return_message)
+    try:
+        cursor.execute("SELECT COUNT(*) FROM document_template")
+        count = cursor.fetchone()
+        id = count['count'] + 1
+        cursor.execute(
+            "INSERT INTO document_template (ID, NAME, DESCRIPTION) "
+            "VALUES(%s, %s, %s)",
+            (id, args['name'], args['description']))
+        conn.commit()
+        close()
+        return_message["result"] = "success"
+        return_message["id"] = id
+    except Exception as err:
+        return_message["result"] = "false"
+        return_message["error"] = "Cant insert new data"
+        return json.dumps(return_message)
+    return json.dumps(return_message)
+
+
+# curl "http://localhost:5000/search?cnt=3&order=DESC"
+@api.route('/search', methods=['GET'])
+def get_search():
+    cnt = request.args.get("cnt")
+    order = request.args.get("order")
+    if cnt is None or not cnt.isnumeric():
+        raise Exception('cnt', 'Parameter cnt is not correct')
+
+    desc = "DESC"
+    if order is not None and order.upper() in ("DESC", "ASC"):
+        desc = order
+
+    try:
+        cursor.execute("SELECT * FROM document_template ORDER BY id " + desc + " LIMIT(" + cnt + ")")
+    except Exception as err:
+        raise Exception('select', err)
+
+    fetch = cursor.fetchall()
+    data = [dict(row) for row in fetch]
+    close()
+    return jsonify(data)
 
 
 def close():
