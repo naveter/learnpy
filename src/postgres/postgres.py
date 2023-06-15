@@ -2,6 +2,7 @@
 sudo apt install python3-virtualenv
 virtualenv ~/dev/learnpy/venv && source ~/dev/learnpy/venv/bin/activate
 pip install psycopg2-binary
+~/dev/learnpy/venv/bin/deactivate # disable virtualenv
 """
 import psycopg2.extras
 import psycopg2
